@@ -1,0 +1,71 @@
+import random
+
+player_wins = 0
+comp_wins = 0
+points = 0
+rounds = 0
+pot_ans = ['rock', 'paper', 'scissors'] # List of acceptable user input
+
+# List of the value sets for all game configurations, from computers perspective
+options_dicts = [{"player": "rock", "computer": "paper", "win": True},
+                 {"player": "rock", "computer": "scissors", "win": False},
+                 {"player": "paper", "computer": "rock", "win": False},
+                 {"player": "paper", "computer": "scissors", "win": True},
+                 {"player": "scissors", "computer": "rock", "win": True},
+                 {"player": "scissors", "computer": "paper", "win": False}]
+
+# Generate random choice for the computer
+def get_comp_pick():
+    rand_num = random.randint(0, 2)
+    pick = pot_ans[rand_num]
+    return pick
+
+# Evaluates the winner by looping through the value sets
+def get_winner(options_dicts, player_pick, comp_pick, player_wins, comp_wins, bet, points):
+    if player_pick == comp_pick:
+        print("It's a tie!")
+        return player_wins, comp_wins, points
+    for d in options_dicts:
+        if player_pick == d['player'] and comp_pick == d['computer']:
+            if d['win'] == True:
+                print('Computer wins!\n')
+                comp_wins +=1
+                points -= bet
+            else:
+                print('You win!\n')
+                player_wins += 1
+                points += bet
+            break
+    return player_wins, comp_wins, points
+
+# Display game results
+def endgame(rounds, comp_wins, player_wins, points):
+    print('Thanks for playing!')
+    print(f'We played {rounds} rounds')
+    print(f'Computer won {comp_wins} rounds')
+    print(f'You won {player_wins} rounds')
+    print(f'You have {points} points')
+    
+
+while True:
+    try:
+        bet = int(input('What bet would you like to place on this round?\nEnter a nuber from 1 to 10. Press 0 to end the game:  '))
+        if bet == 0:
+            endgame(rounds, comp_wins, player_wins, points)
+            break
+        elif bet < 0 or bet > 10:
+            print("Invalid bet.")
+            continue
+    except ValueError:
+        print("Invalid bet.")
+        continue
+    player_pick = (input('Rock, Paper, Scissors, and SHOOT:\n')).strip().lower()
+    if player_pick not in pot_ans:
+        print("Invalid input.")
+        continue
+    comp_pick = get_comp_pick()
+    print(f'\n{comp_pick}\n')
+    player_wins, comp_wins, points = get_winner(options_dicts, player_pick, comp_pick, player_wins, comp_wins, bet, points)
+    rounds += 1
+
+
